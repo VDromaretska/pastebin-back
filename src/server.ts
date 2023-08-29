@@ -21,6 +21,15 @@ app.get("/pastes", async (_req, res) => {
     res.json(result.rows);
 });
 
+app.post("/pastes", async (req, res) => {
+    const { title, description } = req.body;
+    const newPaste = await client.query(
+        "insert into paste_list (title, description) values ($1, $2) returning *",
+        [title, description]
+    );
+    res.json(newPaste.rows);
+});
+
 // app.get("/health-check", async (_req, res) => {
 //     try {
 //         //For this to be successful, must connect to db
