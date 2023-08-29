@@ -1,8 +1,12 @@
-DROP TABLE IF EXISTS food;
-
-CREATE TABLE  food (
-    id          serial PRIMARY KEY,
-    title       varchar(40) NOT NULL
+drop table if exists paste_list;
+create table paste_list (
+id serial primary key,
+  title varchar (50),
+  description varchar (1000) not null,
+  posted_time timestamp default current_timestamp
 );
 
-INSERT INTO food (title) VALUES ('sourdough'), ('olive oil'), ('pizza'), ('picanha'), ('gorgonzola'), ('basil');
+insert into paste_list (title, description)
+values ('First title', 'First body'),
+('Second title', 'second body'),
+('trird title', 'third body');
