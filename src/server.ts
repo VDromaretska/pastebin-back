@@ -32,13 +32,16 @@ app.post("/pastes", async (req, res) => {
     res.json(newPaste.rows);
 });
 
-app.delete("/pastes/:id", async (req, res) => {
-    const id = req.params.id;
-    const queryResult = await client.query(
+app.delete("/pastes/:pasteId", async (req, res) => {
+    const pasteId = req.params.pasteId;
+    await client.query("delete from all_comments where paste_id = $1", [
+        pasteId,
+    ]);
+    const queryResultOfDeletingAPaste = await client.query(
         "delete from paste_list where id = ($1) returning *",
-        [id]
+        [pasteId]
     );
-    res.json(queryResult.rows);
+    res.json(queryResultOfDeletingAPaste.rows);
 });
 
 // route handlers for comments
