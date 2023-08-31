@@ -62,6 +62,16 @@ app.post("/pastes/:pasteId/comments", async (req, res) => {
     res.json(newComment.rows);
 });
 
+app.delete("/pastes/:pasteId/comments/:commentId", async (req, res) => {
+    const pasteId = req.params.pasteId;
+    const commentId = req.params.commentId;
+    const queryResult = await client.query(
+        "delete from all_comments where paste_id = $1 and id = $2 returning *",
+        [pasteId, commentId]
+    );
+    res.json(queryResult.rows);
+});
+
 connectToDBAndStartListening();
 
 async function connectToDBAndStartListening() {
