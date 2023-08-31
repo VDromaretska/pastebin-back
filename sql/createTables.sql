@@ -13,7 +13,7 @@ values ('First title', 'First body'),
 
 create table all_comments (
 	id serial primary key,
-  paste_id integer references paste_list(id), 
+  paste_id integer references paste_list(id) not null, 
   comment varchar(20000) not null
 );
 
