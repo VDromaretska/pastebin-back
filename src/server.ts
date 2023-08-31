@@ -16,17 +16,10 @@ const app = express();
 app.use(express.json()); //add JSON body parser to each following route handler
 app.use(cors()); //add CORS support to each following route handler
 
+// route handlers for pastes
+
 app.get("/pastes", async (_req, res) => {
     const result = await client.query("select * from paste_list");
-    res.json(result.rows);
-});
-
-app.get("/pastes/:pasteId/comments", async (req, res) => {
-    const pasteId = req.params.pasteId;
-    const result = await client.query(
-        "select * from all_comments where paste_id = $1",
-        [pasteId]
-    );
     res.json(result.rows);
 });
 
@@ -39,18 +32,6 @@ app.post("/pastes", async (req, res) => {
     res.json(newPaste.rows);
 });
 
-// app.get("/health-check", async (_req, res) => {
-//     try {
-//         //For this to be successful, must connect to db
-//         await client.query("select now()");
-//         res.status(200).send("system ok");
-//     } catch (error) {
-//         //Recover from error rather than letting system halt
-//         console.error(error);
-//         res.status(500).send("An error occurred. Check server logs.");
-//     }
-// });
-
 app.delete("/pastes/:id", async (req, res) => {
     const id = req.params.id;
     const queryResult = await client.query(
@@ -58,6 +39,27 @@ app.delete("/pastes/:id", async (req, res) => {
         [id]
     );
     res.json(queryResult.rows);
+});
+
+// route handlers for comments
+
+app.get("/pastes/:pasteId/comments", async (req, res) => {
+    const pasteId = req.params.pasteId;
+    const result = await client.query(
+        "select * from all_comments where paste_id = $1",
+        [pasteId]
+    );
+    res.json(result.rows);
+});
+
+app.post("/pastes/:pasteId/comments", async (req, res) => {
+    const pasteId = req.params.pasteId;
+    const { comment } = req.body;
+    const newComment = await client.query(
+        "insert into all_comments (paste_id, comment) values ($1, $2) returning *",
+        [pasteId, comment]
+    );
+    res.json(newComment.rows);
 });
 
 connectToDBAndStartListening();
