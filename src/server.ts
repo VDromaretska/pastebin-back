@@ -21,6 +21,15 @@ app.get("/pastes", async (_req, res) => {
     res.json(result.rows);
 });
 
+app.get("/pastes/:pasteId/comments", async (req, res) => {
+    const pasteId = req.params.pasteId;
+    const result = await client.query(
+        "select * from all_comments where paste_id = $1",
+        [pasteId]
+    );
+    res.json(result.rows);
+});
+
 app.post("/pastes", async (req, res) => {
     const { title, description } = req.body;
     const newPaste = await client.query(
@@ -41,6 +50,15 @@ app.post("/pastes", async (req, res) => {
 //         res.status(500).send("An error occurred. Check server logs.");
 //     }
 // });
+
+app.delete("/pastes/:id", async (req, res) => {
+    const id = req.params.id;
+    const queryResult = await client.query(
+        "delete from paste_list where id = ($1) returning *",
+        [id]
+    );
+    res.json(queryResult.rows);
+});
 
 connectToDBAndStartListening();
 
